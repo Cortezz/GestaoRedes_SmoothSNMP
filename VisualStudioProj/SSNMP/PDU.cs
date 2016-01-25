@@ -19,9 +19,12 @@ namespace SmoothSNMP
 
         public byte[] buildPDU(int requestID, int type, string community, string[] mibs)
         {
+            List<byte[]> oids;
             int MIBlength = 0;
             foreach (string s in mibs)
                 MIBlength += s.Length;
+
+            oids = ConvertOIDsToBytes(mibs);
 
 
             pdu[index++] = 0x30; //Type: List
@@ -97,6 +100,26 @@ namespace SmoothSNMP
             }
             pdu[index++] = 0x05; //Type: Null
             pdu[index++] = 0x00; 
+        }
+
+        private List<byte[]> ConvertOIDsToBytes (string[] mibs)
+        {
+            int i;
+            List<byte[]> res = new List<byte[]>();
+
+            foreach (string s in mibs)
+            {
+                i = 0;
+                byte[] b = new byte[s.Length - (s.Length / 2) + 1];
+                string[] withoutDots = s.Split('.');
+                foreach (string s2 in withoutDots)
+                {
+                    b[i] = Convert.ToByte(s2);
+                    i++;
+                }
+                res.Add(b);
+            }
+            return res;
         }
 
         
