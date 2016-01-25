@@ -1,6 +1,6 @@
 # Network Management (Gestão de Redes)
 
-### SNMP Library written in C#
+### SNMP Library written in C Sharp
 
 Most SNMP Libraries tend to be overly complicated, either due to their poor documentation or because in order to actually use them one has to write quite a few lines of code. 
 
