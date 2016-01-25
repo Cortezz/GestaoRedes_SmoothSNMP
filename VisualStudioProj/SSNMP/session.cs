@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -23,7 +25,7 @@ namespace SmoothSNMP
         /// </summary>
         public Session()
         {
-            this.host = "localhost";
+            this.host = "127.0.0.1";
             this.port = 161;
             this.community = "public";
         }
@@ -77,20 +79,26 @@ namespace SmoothSNMP
         {
             
             PDU pdu = new PDU(1024);
-            byte[] data =  pdu.buildPDU(0, 1, this.community, mibs);
-            for (int i = 0; i < data.Length; i++)
-                Console.WriteLine(i + " - " + data[i].ToString("X"));
-            return data;
+            byte[] data =  pdu.buildPDU(0, 0, this.community, mibs);
+            byte[] response = SendPDU(data, pdu.getIndex() + 1);
+            return response;
 
         }
 
-        public static void main (String[] args)
+
+        private byte[] SendPDU(byte[] PDU, int size)
         {
-            string[] mibs = new string[1] { "1.2.3.4.5.6.7" };
-            Session session = new Session();
-            byte[] pdu = session.get(mibs);
-            for (int i = 0; i<pdu.Length;i++)
-                Console.WriteLine(i+" - "+pdu[i].ToString("X"));
+            IPEndPoint iep = new IPEndPoint(IPAddress.Parse(host), 161);
+            UdpClient udpClient = new UdpClient();
+            udpClient.Connect(iep);
+            udpClient.Send(PDU, size);
+            
+            try
+            {
+                byte[] response = udpClient.Receive(ref iep);
+                return response;
+            }
+            catch (Exception e) { Console.WriteLine(e.ToString()); return null; }
         }
         
     }
