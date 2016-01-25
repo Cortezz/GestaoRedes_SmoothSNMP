@@ -42,11 +42,24 @@ namespace SmoothSNMP
 
 
 
-        public byte[] get()
+        public byte[] get(string[] mibs)
         {
-            PDU pdu = new PDU(100);
-            //Needs to be implemented
-            return new byte[25];
+            
+            PDU pdu = new PDU(1024);
+            byte[] data =  pdu.buildPDU(0, 1, this.community, mibs);
+            for (int i = 0; i < data.Length; i++)
+                Console.WriteLine(i + " - " + data[i].ToString("X"));
+            return data;
+
+        }
+
+        public static void main (String[] args)
+        {
+            string[] mibs = new string[1] { "1.2.3.4.5.6.7" };
+            Session session = new Session();
+            byte[] pdu = session.get(mibs);
+            for (int i = 0; i<pdu.Length;i++)
+                Console.WriteLine(i+" - "+pdu[i].ToString("X"));
         }
         
     }

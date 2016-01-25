@@ -17,27 +17,28 @@ namespace SmoothSNMP
             index = 0;
         }
 
-        public byte[] buildPDU(int request, int type, string localhost, int port, string community, string[] mibs)
+        public byte[] buildPDU(int requestID, int type, string community, string[] mibs)
         {
-            int PDULength = 50;
-            
-            
+            int MIBlength = 0;
+            foreach (string s in mibs)
+                MIBlength += s.Length;
+
+
             pdu[index++] = 0x30; //Type: List
-            pdu[index++] = Convert.ToByte(PDULength); //Length of the PDU
+            pdu[index++] = Convert.ToByte(22 + community.Length + MIBlength + (2 * mibs.Length)); //Length of the PDU
             //Version 2C
             FillInVersion2C();
             //Community
             FillInCommunity(community);
             //PDU Type
             pdu[index++] = Convert.ToByte(160 + type); //Type of the SNMP PDU
-            pdu[index++] = Convert.ToByte(WHAT!) //Length 
+            pdu[index++] = Convert.ToByte(15 + MIBlength + 2 * mibs.Length); //Length
             //Request ID
-            FillInRequestID(request);
+            FillInRequestID(requestID);
             //Error Code and Status
             FillInErrorCodeAndStatus();
             //OIDS
-            FillInOIDS(mibs);
-            pdu[index++] = 0x00; //End of PDU
+            FillInVarbindList(mibs, MIBlength);
 
             return this.pdu;
         }
@@ -62,11 +63,8 @@ namespace SmoothSNMP
         private void FillInRequestID (int request)
         {
             this.pdu[index++] = 0x02; //Type: Integer
-            this.pdu[index++] = 0x04; //Length: 4
-            this.pdu[index++] = 0x00;
-            this.pdu[index++] = 0x03;   /* Request ID*/
-            this.pdu[index++] = 0x04;
-            this.pdu[index++] = 0x05;
+            this.pdu[index++] = 0x01; //Length: 4
+            this.pdu[index++] = Convert.ToByte(request); //Request ID
         }
 
 
@@ -82,26 +80,26 @@ namespace SmoothSNMP
             this.pdu[index++] = 0x00; //Since there is no error, the index points to "nowhere".
         }
 
-        private void FillInOIDS(string[] mibs)
+        private void FillInVarbindList(string[] mibs, int MIBlength)
         {
-            int MIBlength = 0;
-            foreach (string s in mibs)
-                MIBlength += s.Length;
-            
             pdu[index++] = 0x30; //Type: List
             pdu[index++] = Convert.ToByte(4 + MIBlength + 2 * mibs.Length); // Length
             pdu[index++] = 0x30; //Type: List
-            pdu[index++] = Convert.ToByte(MIBlength + 2 * mibs.Length); // Length
+            pdu[index++] = Convert.ToByte(2 + MIBlength + 2 * mibs.Length); // Length
             foreach (string s in mibs)
             {
-                pdu[index++] = 0x2b; //Beginning of MIB
+                pdu[index++] = 0x06;
                 pdu[index++] = Convert.ToByte(s.Length); //MIB's length
+                pdu[index++] = 0x2b; //Beginning of MIB
                 byte[] mib = Encoding.ASCII.GetBytes(s);
                 foreach (byte b in mib)
                     pdu[index++] = b;
             }
-            pdu[index++] = 0x05; //Null MIB
+            pdu[index++] = 0x05; //Type: Null
+            pdu[index++] = 0x00; 
         }
+
+        
 
     }
 }
