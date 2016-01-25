@@ -10,3 +10,9 @@ C:\Users\Cortez\Documents\Visual Studio 2015\Projects\SSNMP\GR_SmoothSNMP\SSNMP\
 C:\Users\Cortez\Documents\Visual Studio 2015\Projects\SSNMP\GestaoRedes_SmoothSNMP\SSNMP\bin\Debug\SSNMP.exe.config
 C:\Users\Cortez\Documents\Visual Studio 2015\Projects\SSNMP\GestaoRedes_SmoothSNMP\SSNMP\obj\Debug\SSNMP.exe
 C:\Users\Cortez\Documents\Visual Studio 2015\Projects\SSNMP\GestaoRedes_SmoothSNMP\SSNMP\obj\Debug\SSNMP.pdb
+C:\Users\Cortez\Documents\Visual Studio 2015\Projects\SSNMP\GestaoRedes_SmoothSNMP\VisualStudioProj\SSNMP\bin\Debug\SSNMP.exe.config
+C:\Users\Cortez\Documents\Visual Studio 2015\Projects\SSNMP\GestaoRedes_SmoothSNMP\VisualStudioProj\SSNMP\obj\Debug\SSNMP.exe
+C:\Users\Cortez\Documents\Visual Studio 2015\Projects\SSNMP\GestaoRedes_SmoothSNMP\VisualStudioProj\SSNMP\obj\Debug\SSNMP.pdb
+C:\Users\Cortez\Documents\Visual Studio 2015\Projects\SSNMP\GestaoRedes_SmoothSNMP\VisualStudioProj\SSNMP\obj\Debug\SSNMP.csprojResolveAssemblyReference.cache
+C:\Users\Cortez\Documents\Visual Studio 2015\Projects\SSNMP\GestaoRedes_SmoothSNMP\VisualStudioProj\SSNMP\bin\Debug\SSNMP.exe
+C:\Users\Cortez\Documents\Visual Studio 2015\Projects\SSNMP\GestaoRedes_SmoothSNMP\VisualStudioProj\SSNMP\bin\Debug\SSNMP.pdb

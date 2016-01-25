@@ -4,9 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SSNMP
+namespace SmoothSNMP
 {
-    class session
+    /// <summary>
+    /// Class which represents a session, in which SNMP requests can be made.
+    /// </summary>
+    public class Session
     {
         private string host;
         private int port;
@@ -18,7 +21,7 @@ namespace SSNMP
         ///     - port : 161
         ///     - host : localhost
         /// </summary>
-        public session()
+        public Session()
         {
             this.host = "localhost";
             this.port = 161;
@@ -31,11 +34,20 @@ namespace SSNMP
         /// </summary>
         /// <param name="host">Host associated with the session.</param>
         /// <param name="community">Community associated with the session.</param>
-        public session (string host, string community)
+        public Session (string host, string community)
         {
             this.host = host;
             this.community = community;
         }
 
+
+
+        public byte[] get()
+        {
+            PDU pdu = new PDU(100);
+            //Needs to be implemented
+            return new byte[25];
+        }
+        
     }
 }
