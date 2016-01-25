@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace SmoothSNMP
 {
     /// <summary>
-    /// Class which represents a session, in which SNMP requests can be made.
+    /// Class which represents a session, in which SNMPv2c requests can be made.
     /// </summary>
     public class Session
     {
@@ -40,8 +40,39 @@ namespace SmoothSNMP
             this.community = community;
         }
 
+        /// <summary>
+        /// Changes the community associated with the session.
+        /// </summary>
+        /// <param name="community">Community to be associated with the session.</param>
+        public void setCommunity (string community)
+        {
+            this.community = community;
+        }
+
+        /// <summary>
+        /// Changes the host associated with the session.
+        /// </summary>
+        /// <param name="host">Host to be associated with the session.</param>
+        public void setHost (string host)
+        {
+            this.host = host;
+        }
+
+        /// <summary>
+        /// Changes the port associated with the session.
+        /// </summary>
+        /// <param name="port">Port to be associated with the session.</param>
+        public void setPort (int port)
+        {
+            this.port = port;
+        }
 
 
+        /// <summary>
+        /// Builds and sends an SNMP GetRequest PDU.
+        /// </summary>
+        /// <param name="mibs">OIDs to be attached to the GetRequest.</param>
+        /// <returns>The response to the GetRequest from the Agent.</returns>
         public byte[] get(string[] mibs)
         {
             
