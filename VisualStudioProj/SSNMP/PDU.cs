@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace SmoothSNMP
 {
+    /// <summary>
+    /// Class used to build and store an SNMP PDU.
+    /// </summary>
     internal class PDU
     {
         private byte[] pdu;
@@ -17,8 +20,20 @@ namespace SmoothSNMP
             index = 0;
         }
 
+        /// <summary>
+        /// Returns the current index of the PDU.
+        /// </summary>
+        /// <returns></returns>
         public int getIndex()  { return this.index;}
 
+        /// <summary>
+        /// Builds an SNMP PDU. 
+        /// </summary>
+        /// <param name="requestID">ID associated with this SNMP request.</param>
+        /// <param name="type">Type of the SNMP PDU (e.g. Get, GetNext).</param>
+        /// <param name="community">Name of the community.</param>
+        /// <param name="mibs">OIDs used in the PDU.</param>
+        /// <returns>A byte array which represents the built PDU.</returns>
         public byte[] buildPDU(int requestID, int type, string community, string[] mibs)
         {
             int MIBlength = 0;
@@ -30,30 +45,37 @@ namespace SmoothSNMP
             pdu[index++] = 0x30; //Type: List
             pdu[index++] = Convert.ToByte(25 + community.Length + MIBlength + (2 * mibs.Length)); //Length of the PDU
             //Version 2C
-            FillInVersion2C();
+            InsertVersion2C();
             //Community
-            FillInCommunity(community);
+            InsertCommunity(community);
             //PDU Type
             pdu[index++] = Convert.ToByte(160 + type); //Type of the SNMP PDU
             pdu[index++] = Convert.ToByte(18 + MIBlength + 2 * mibs.Length); //Length
             //Request ID
-            FillInRequestID(requestID);
+            InsertRequestID(requestID);
             //Error Code and Status
-            FillInErrorCodeAndStatus();
+            InsertErrorCodeAndStatus();
             //Varbinds
-            FillInVarbindList(mibs, MIBlength, oids);
+            InsertVarbindList(MIBlength, oids);
 
             return this.pdu;
         }
 
-        private void FillInVersion2C()
+        /// <summary>
+        /// Inserts the necessary bytes for the Version 2C into the PDU.
+        /// </summary>
+        private void InsertVersion2C()
         {
             pdu[index++] = 0x02; //Type: Integer
             pdu[index++] = 0x01; //Length: 1
             pdu[index++] = 0x01; // Version: 2C
         }
 
-        private void FillInCommunity(string community)
+        /// <summary>
+        /// Inserts the community name into the PDU.
+        /// </summary>
+        /// <param name="community">Name of the community.</param>
+        private void InsertCommunity(string community)
         {
             byte[] comBytes = Encoding.ASCII.GetBytes(community);
 
@@ -63,7 +85,11 @@ namespace SmoothSNMP
                 pdu[index++] = b;  
         }
 
-        private void FillInRequestID (int request)
+        /// <summary>
+        /// Inserts the request ID into the PDU.
+        /// </summary>
+        /// <param name="request">Request ID.</param>
+        private void InsertRequestID (int request)
         {
             this.pdu[index++] = 0x02; //Type: Integer
             this.pdu[index++] = 0x04; //Length: 4
@@ -74,7 +100,10 @@ namespace SmoothSNMP
         }
 
 
-        private void FillInErrorCodeAndStatus()
+        /// <summary>
+        /// Inserts the bytes associated with the Error Code and Error Status into the PDU.
+        /// </summary>
+        private void InsertErrorCodeAndStatus()
         {
             //Error code
             this.pdu[index++] = 0x02; //Type: Integer
@@ -86,14 +115,18 @@ namespace SmoothSNMP
             this.pdu[index++] = 0x00; //Since there is no error, the index points to "nowhere".
         }
 
-        private void FillInVarbindList(string[] mibs, int MIBlength, List<byte[]> oids)
+        /// <summary>
+        /// Inserts the Varbinds into the PDU.
+        /// </summary>
+        /// <param name="MIBlength">Length of all of the OIDs combined.</param>
+        /// <param name="oids">List with the OIDs.</param>
+        private void InsertVarbindList(int MIBlength, List<byte[]> oids)
         {
             int i;
-
             pdu[index++] = 0x30; //Type: List
-            pdu[index++] = Convert.ToByte(4 + MIBlength + 2 * mibs.Length); // Length
+            pdu[index++] = Convert.ToByte(4 + MIBlength + 2 * oids.Count); // Length
             pdu[index++] = 0x30; //Type: List
-            pdu[index++] = Convert.ToByte(2 + MIBlength + 2 * mibs.Length); // Length
+            pdu[index++] = Convert.ToByte(2 + MIBlength + 2 * oids.Count); // Length
             for (i = 0; i<oids.Count;i++)
             {
                 byte[] varbind = oids.ElementAt(i);
@@ -106,6 +139,11 @@ namespace SmoothSNMP
             pdu[index] = 0x00; 
         }
 
+        /// <summary>
+        /// Converts a string array containing the OIDs into a list of byte arrays, each one representing one OID.
+        /// </summary>
+        /// <param name="mibs">String representation of OIDs to be converted.</param>
+        /// <returns>List with all the oids written in their byte form.</returns>
         public List<byte[]> ConvertOIDsToBytes(string[] mibs)
         {
             int i, j;

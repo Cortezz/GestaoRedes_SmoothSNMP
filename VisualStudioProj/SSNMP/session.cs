@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace SmoothSNMP
 {
     /// <summary>
@@ -16,6 +11,7 @@ namespace SmoothSNMP
         private string host;
         private int port;
         private string community;
+        private int requestCounter;
 
         /// <summary>
         /// Creates a session whose default values are:
@@ -28,6 +24,7 @@ namespace SmoothSNMP
             this.host = "127.0.0.1";
             this.port = 161;
             this.community = "public";
+            this.requestCounter = 0;
         }
 
 
@@ -40,6 +37,7 @@ namespace SmoothSNMP
         {
             this.host = host;
             this.community = community;
+            this.requestCounter = 0;
         }
 
         /// <summary>
@@ -79,23 +77,32 @@ namespace SmoothSNMP
         {
             
             PDU pdu = new PDU(1024);
-            byte[] data =  pdu.buildPDU(0, 0, this.community, mibs);
+            byte[] data =  pdu.buildPDU(requestCounter, 0, this.community, mibs);
             byte[] response = SendPDU(data, pdu.getIndex() + 1);
             return response;
 
         }
 
-
+        /// <summary>
+        /// Sends a PDU to the SNMP Agent. 
+        /// Timeout is specified to be 5 seconds.
+        /// </summary>
+        /// <param name="PDU">SNMP PDU to be sent.</param>
+        /// <param name="size">Size of the PDU.</param>
+        /// <returns>The response from the SNMP Agent.</returns>
         private byte[] SendPDU(byte[] PDU, int size)
         {
             IPEndPoint iep = new IPEndPoint(IPAddress.Parse(host), 161);
             UdpClient udpClient = new UdpClient();
+            udpClient.Client.ReceiveTimeout = 5000;
             udpClient.Connect(iep);
             udpClient.Send(PDU, size);
             
             try
             {
+                
                 byte[] response = udpClient.Receive(ref iep);
+                requestCounter++;
                 return response;
             }
             catch (Exception e) { Console.WriteLine(e.ToString()); return null; }
