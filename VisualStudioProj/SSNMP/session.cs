@@ -37,6 +37,7 @@ namespace SmoothSNMP
         {
             this.host = host;
             this.community = community;
+            this.port = 161;
             this.requestCounter = 0;
         }
 
@@ -78,7 +79,7 @@ namespace SmoothSNMP
             
             PDU pdu = new PDU(1024);
             byte[] data =  pdu.buildPDU(requestCounter, 0, this.community, mibs);
-            byte[] response = SendPDU(data, pdu.getIndex() + 1);
+            byte[] response = SendPDU(data, pdu.getIndex()+1);
             return response;
 
         }
